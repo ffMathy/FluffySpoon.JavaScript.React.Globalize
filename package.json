@@ -2,24 +2,49 @@
   "name": "@fluffy-spoon/react-globalize",
   "version": "1.0.0",
   "private": false,
-  "devDependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "@types/jest": "^24.0.0",
-    "@types/node": "^12.0.0",
-    "@types/react": "^16.9.0",
-    "@types/react-dom": "^16.9.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
-    "typescript": "~3.7.2"
-  },
-  "peerDependencies": {
-    "react": "^16.13.1"
+  "description": "",
+  "author": "ffMathy",
+  "license": "MIT",
+  "repository": "ffMathy/FluffySpoon.JavaScript.React.Globalize",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "engines": {
+    "node": ">=8",
+    "npm": ">=5"
   },
   "scripts": {
-    "prepack": "npm i && tsc",
-    "build": "tsc"
+    "test": "cross-env CI=1 react-scripts test --env=jsdom",
+    "test:watch": "react-scripts test --env=jsdom",
+    "build": "rollup -c",
+    "start": "rollup -c -w",
+    "prepare": "npm run build",
+    "predeploy": "cd example && npm install && npm run build",
+    "deploy": "gh-pages -d example/build"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "react": "^16.9.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/runtime": "^7.3.1",
+    "@testing-library/react-hooks": "^3.2.1",
+    "@types/jest": "^23.3.13",
+    "@types/react": "^16.7.22",
+    "cross-env": "^5.2.0",
+    "gh-pages": "^2.0.1",
+    "react": "^16.9.0",
+    "react-scripts": "^3.4.0",
+    "react-test-renderer": "^16.9.0",
+    "rollup": "^1.1.2",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-peer-deps-external": "^2.2.0",
+    "rollup-plugin-typescript2": "^0.19.2",
+    "rollup-plugin-url": "^2.1.0",
+    "typescript": "^3.2.4"
   }
 }

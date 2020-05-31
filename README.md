@@ -8,9 +8,9 @@ First, you need to globally create a key for your state, with an optional initia
 ```typescript
 //users.ts
 
-import { createGlobal } from '@fluffy-spoon/react-globalize';
+import { createGlobalState } from '@fluffy-spoon/react-globalize';
 
-export const usersKey = createGlobal([{ firstName: "John", lastName: "Doe" }]);
+export const usersKey = createGlobalState([{ firstName: "John", lastName: "Doe" }]);
 ```
 
 Then, you can simply use it in one of your components, just like you would use `useState`!
@@ -23,7 +23,7 @@ import { usersKey } from './users';
 export const GlobalUserListComponent = () => {
 
     //users and setUsers behaves like useState, except they are now shared between all components!
-    const [users, setUsers] = useGlobal(usersKey);
+    const [users, setUsers] = useGlobalState(usersKey);
 
     ...
 }
