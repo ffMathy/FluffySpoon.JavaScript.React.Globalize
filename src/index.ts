@@ -9,7 +9,7 @@ const state: {
 
 export type GlobalStateKey<T> = {};
 
-export function createGlobalState<T>(initialState?: T): GlobalStateKey<T> {
+export function createGlobal<T>(initialState?: T): GlobalStateKey<T> {
     const key = Symbol();
     state[keyAsString(key)] = {
         value: initialState,
@@ -19,7 +19,7 @@ export function createGlobalState<T>(initialState?: T): GlobalStateKey<T> {
     return key;
 }
 
-export function useGlobalState<T>(key: GlobalStateKey<T>): [T, React.Dispatch<React.SetStateAction<T>>]
+export function useGlobal<T>(key: GlobalStateKey<T>): [T, React.Dispatch<React.SetStateAction<T>>]
 {
     if(!key)
         throw new Error("No key provided.");
