@@ -83,7 +83,7 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
         value,
         {
             set: setValue,
-            refresh: () => Promise.resolve(globalStateValue.accessor!()).then(setValue)
+            refresh: () => Promise.resolve(globalStateValue.accessor!(new AbortController().signal)).then(setValue)
         }
     ]
 }
