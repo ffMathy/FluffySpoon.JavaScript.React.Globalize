@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
 
+type ResourceState = 
+    "initial" |
+    "fetching" |
+    "fetched";
+
 const state: {
     [key: string]: {
         listeners: Array<(value: any) => void>,
-        accessor?: () => any,
+        accessor?: (abortSignal: AbortSignal) => any,
+        state?: ResourceState,
         value: any
     }
 } = {};
@@ -26,11 +32,12 @@ export function createGlobalState<T>(initialState?: T): GlobalStateKey<T> {
     return key as any;
 }
 
-export function createGlobalResource<T>(accessor: () => Promise<T>|T, initialState?: T): GlobalResourceKey<T> {
+export function createGlobalResource<T>(accessor: (abortSignal: AbortSignal) => Promise<T>|T, initialState?: T): GlobalResourceKey<T> {
     const key = Symbol();
     state[keyAsString(key)] = {
         value: initialState,
         accessor,
+        state: "initial",
         listeners: []
     };
 
@@ -49,10 +56,28 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
             if(!globalStateValue.accessor)
                 throw new Error('The given key does not represent a resource.');
 
-            if(value === void 0)
-                Promise.resolve(globalStateValue.accessor()).then(setValue);
+            if(globalStateValue.state !== "initial")
+                return;
+
+            globalStateValue.state = "fetching";
+
+            const abortController = new AbortController();
+            Promise
+                .resolve(globalStateValue
+                    .accessor(abortController.signal))
+                .then(v => {
+                    globalStateValue.state = "fetched";
+                    setValue(v);
+                });
+
+            return () => {
+                abortController.abort();
+            };
         },
-        [globalStateValue.accessor]);
+        [
+            globalStateValue.accessor,
+            globalStateValue.state
+        ]);
 
     return [
         value,
