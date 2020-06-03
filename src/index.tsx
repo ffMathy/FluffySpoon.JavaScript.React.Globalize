@@ -62,6 +62,7 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
             globalStateValue.state = "fetching";
 
             const abortController = new AbortController();
+            try {
             Promise
                 .resolve(globalStateValue
                     .accessor(abortController.signal))
@@ -77,6 +78,10 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
                 .catch(() => {
                     globalStateValue.state = "initial";
                 });
+            } catch(ex) {
+                globalStateValue.state = "initial";
+                throw ex;
+            }
 
             return () => {
                 abortController.abort();
