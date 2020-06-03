@@ -66,6 +66,11 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
                 .resolve(globalStateValue
                     .accessor(abortController.signal))
                 .then(v => {
+                    if(abortController.signal.aborted) {
+                        globalStateValue.state = "initial";
+                        return;
+                    }
+
                     globalStateValue.state = "fetched";
                     setValue(v);
                 })
