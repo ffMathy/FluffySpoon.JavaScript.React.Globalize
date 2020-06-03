@@ -68,6 +68,9 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
                 .then(v => {
                     globalStateValue.state = "fetched";
                     setValue(v);
+                })
+                .catch(() => {
+                    globalStateValue.state = "initial";
                 });
 
             return () => {
