@@ -49,7 +49,8 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
             if(!globalStateValue.accessor)
                 throw new Error('The given key does not represent a resource.');
 
-            Promise.resolve(globalStateValue.accessor()).then(setValue);
+            if(value === void 0)
+                Promise.resolve(globalStateValue.accessor()).then(setValue);
         },
         [globalStateValue.accessor]);
 
