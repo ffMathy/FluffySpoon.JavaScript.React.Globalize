@@ -28,3 +28,34 @@ export const GlobalUserListComponent = () => {
     ...
 }
 ```
+
+## Using resources
+Resources can be helpful for fetching async data only once, and providing controls for refreshing that data.
+
+```typescript
+//users.ts
+
+import { createGlobalResource } from '@fluffy-spoon/react-globalize';
+
+export const usersKey = createGlobalResource(async () => 
+    await fetch('https://api.example.com/users'));
+```
+
+Usage of resources is very similar to global state, and is also only fetched once. However, the 2nd argument is a "control" object which has a `refresh` and a `set` function.
+
+```typescript
+//index.ts
+
+import { usersKey } from './users';
+
+export const GlobalUserListComponent = () => {
+
+    const [users, {usersControl}] = useGlobalResource(usersKey);
+
+    //users now refers to the value, fetched only once and shared.
+    //usersControl.refresh() will refresh the value.
+    //usersControl.set() will set the value to something.
+
+    ...
+}
+```
