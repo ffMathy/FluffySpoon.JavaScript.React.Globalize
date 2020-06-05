@@ -10,6 +10,7 @@ const state: {
         listeners: Array<(value: any) => void>,
         accessor?: (abortSignal: AbortSignal) => any,
         state?: ResourceState,
+        default?: any,
         value: any
     }
 } = {};
@@ -36,6 +37,7 @@ export function createGlobalResource<T>(accessor: (abortSignal: AbortSignal) => 
     const key = Symbol();
     state[keyAsString(key)] = {
         value: initialState,
+        default: initialState,
         accessor,
         state: "initial",
         listeners: []
@@ -63,28 +65,31 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
 
             const abortController = new AbortController();
             try {
-            Promise
-                .resolve(globalStateValue
-                    .accessor(abortController.signal))
-                .then(v => {
-                    if(abortController.signal.aborted) {
-                        globalStateValue.state = "initial";
-                        return;
-                    }
+                Promise
+                    .resolve(globalStateValue
+                        .accessor(abortController.signal))
+                    .then(v => {
+                        if(abortController.signal.aborted) {
+                            globalStateValue.state = "initial";
+                            return;
+                        }
 
-                    globalStateValue.state = "fetched";
-                    setValue(v);
-                })
-                .catch(() => {
-                    globalStateValue.state = "initial";
-                });
+                        globalStateValue.state = "fetched";
+                        setValue(v);
+                    })
+                    .catch(() => {
+                        setValue(globalStateValue.default);
+                        globalStateValue.state = "initial";
+                    });
             } catch(ex) {
+                setValue(globalStateValue.default);
                 globalStateValue.state = "initial";
                 throw ex;
             }
 
             return () => {
                 abortController.abort();
+                globalStateValue.state = "initial";
             };
         },
         [
