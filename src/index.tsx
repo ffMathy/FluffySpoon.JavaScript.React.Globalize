@@ -62,6 +62,10 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
                 return;
 
             globalStateValue.state = "fetching";
+            const reset = () => {
+                globalStateValue.state = "initial";
+                setValue(globalStateValue.default);
+            };
 
             const abortController = new AbortController();
             try {
@@ -70,26 +74,21 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
                         .accessor(abortController.signal))
                     .then(v => {
                         if(abortController.signal.aborted) {
-                            globalStateValue.state = "initial";
+                            reset();
                             return;
                         }
 
                         globalStateValue.state = "fetched";
                         setValue(v);
                     })
-                    .catch(() => {
-                        setValue(globalStateValue.default);
-                        globalStateValue.state = "initial";
-                    });
+                    .catch(reset);
             } catch(ex) {
-                setValue(globalStateValue.default);
-                globalStateValue.state = "initial";
+                reset();
                 throw ex;
             }
 
             return () => {
                 abortController.abort();
-                globalStateValue.state = "initial";
             };
         },
         []);
@@ -130,6 +129,9 @@ export function useGlobalState<T>(key: GlobalStateKey<T>): [T, React.Dispatch<Re
 
     useEffect(
         () => {
+            if(localState === globalStateValue.value)
+                return;
+
             globalStateValue.value = localState;
             globalStateValue
                 .listeners

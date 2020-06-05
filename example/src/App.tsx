@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { createGlobalState, useGlobalState, createGlobalResource, useGlobalResource } from '@fluffy-spoon/react-globalize'
 
@@ -14,7 +14,7 @@ const globalFailedResource = createGlobalResource<string>(async (signal) => {
   throw new Error();
 }, "default");
 
-const App = () => {
+const BaseComponent = (props: {id: number}) => {
   const [resource, resourceControl] = useGlobalResource(globalResource);
   const [otherResource, otherResourceControl] = useGlobalResource(globalResource);
 
@@ -27,6 +27,7 @@ const App = () => {
   return (
     <div className="App">
       <header className="App-header">
+        <h1>{props.id}</h1>
         <p>
           {state}
         </p>
@@ -80,4 +81,16 @@ const App = () => {
     </div>
   );
 }
+
+let offset = 1;
+
+const App = () => {
+  const [components, setComponents] = useState([offset]);
+  return <div>
+    <button onClick={() => setComponents([...components, ++offset])}>Add</button>
+    <button onClick={() => setComponents(components.slice(1))}>Remove</button>
+    {components.map(c => <BaseComponent key={c} id={c} />)}
+  </div>
+}
+
 export default App
