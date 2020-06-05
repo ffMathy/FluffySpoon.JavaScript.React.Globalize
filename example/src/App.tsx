@@ -4,13 +4,22 @@ import { createGlobalState, useGlobalState, createGlobalResource, useGlobalResou
 
 const globalState = createGlobalState("hello world");
 const globalResource = createGlobalResource(async (signal) => {
-  await new Promise(resolve => setTimeout(resolve, 5000));
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  console.log('fetching global');
   return "cancelled: " + signal.aborted + " " + new Date().getTime();
 });
+const globalFailedResource = createGlobalResource<string>(async (signal) => {
+  await new Promise(resolve => setTimeout(resolve, 5000));
+  console.log('fetching global failed');
+  throw new Error();
+}, "default");
 
 const App = () => {
   const [resource, resourceControl] = useGlobalResource(globalResource);
   const [otherResource, otherResourceControl] = useGlobalResource(globalResource);
+
+  const [failedResource, failedResourceControl] = useGlobalResource(globalFailedResource);
+  const [otherFailedResource, otherFailedResourceControl] = useGlobalResource(globalFailedResource);
 
   const [state, setState] = useGlobalState(globalState);
   const [otherState, otherSetState] = useGlobalState(globalState);
@@ -24,6 +33,9 @@ const App = () => {
         <p>
           {resource}
         </p>
+        <p>
+          {failedResource}
+        </p>
       </header>
 
       <hr/>
@@ -35,19 +47,35 @@ const App = () => {
         <p>
           {otherResource}
         </p>
+        <p>
+          {otherFailedResource}
+        </p>
       </header>
 
       <hr/>
 
       <button onClick={() => setState(state + " lol")}>Do state set</button>
-      <button onClick={() => resourceControl.refresh()}>Do resource refresh</button>
-      <button onClick={() => resourceControl.set(resource + " lol")}>Do resource set</button>
+      <button onClick={() => otherSetState(otherState + " lol")}>Do other state set</button>
 
       <hr/>
 
-      <button onClick={() => otherSetState(otherState + " lol")}>Do other state set</button>
+      <button onClick={() => resourceControl.refresh()}>Do resource refresh</button>
+      <button onClick={() => resourceControl.set(resource + " lol")}>Do resource set</button>
+
+      <br/>
+
       <button onClick={() => otherResourceControl.refresh()}>Do other resource refresh</button>
       <button onClick={() => otherResourceControl.set(otherResource + " lol")}>Do other resource set</button>
+
+      <hr/>
+
+      <button onClick={() => failedResourceControl.refresh()}>Do failed resource refresh</button>
+      <button onClick={() => failedResourceControl.set(failedResource + " lol")}>Do failed resource set</button>
+
+      <br/>
+
+      <button onClick={() => otherFailedResourceControl.refresh()}>Do other failed resource refresh</button>
+      <button onClick={() => otherFailedResourceControl.set(otherFailedResource + " lol")}>Do other failed resource set</button>
 
     </div>
   );

@@ -92,10 +92,7 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
                 globalStateValue.state = "initial";
             };
         },
-        [
-            globalStateValue.accessor,
-            globalStateValue.state
-        ]);
+        []);
 
     return [
         value,
@@ -108,14 +105,9 @@ export function useGlobalResource<T>(key: GlobalResourceKey<T>): [T, {
 
 export function useGlobalState<T>(key: GlobalStateKey<T>): [T, React.Dispatch<React.SetStateAction<T>>]
 {
-    if(!key)
-        throw new Error("No key provided.");
-
     const globalStateValue = getStateValueByKey(key);
-    if(!globalStateValue)
-        throw new Error('The state has not been created first with createGlobalState.');
-
     const [localState, setLocalState] = useState(globalStateValue.value as T);
+    
     useEffect(
         () => {
             const cleanup = () => {
@@ -134,7 +126,7 @@ export function useGlobalState<T>(key: GlobalStateKey<T>): [T, React.Dispatch<Re
                 .push(setLocalState);
             return cleanup;
         },
-        [globalStateValue.listeners]);
+        []);
 
     useEffect(
         () => {
@@ -145,8 +137,7 @@ export function useGlobalState<T>(key: GlobalStateKey<T>): [T, React.Dispatch<Re
                 .forEach(listener => listener(localState));
         },
         [
-            localState,
-            globalStateValue
+            localState
         ]);
 
     return [localState, setLocalState];
