@@ -2,6 +2,9 @@
 
 No magic, just pure simple React. Check the `index.ts` file to see the simplicity of it.
 
+# Example
+This library is used for most web API calls on <a href="https://dogger.io">dogger.io</a> right now. Check the Network tab of Chrome there to see that resources are only fetched once when navigating!
+
 # Usage
 First, you need to globally create a key for your state, with an optional initial value.
 
