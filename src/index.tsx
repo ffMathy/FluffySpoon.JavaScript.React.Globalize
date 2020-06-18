@@ -23,8 +23,16 @@ export type GlobalResourceKey<T> = {
     resource: T
 };
 
+let keyOffset = 0;
+function generateNewKey() {
+    if (typeof Symbol !== 'function')
+        return "key-" + (++keyOffset);
+
+    return Symbol();
+}
+
 export function createGlobalState<T>(initialState?: T): GlobalStateKey<T> {
-    const key = Symbol();
+    const key = generateNewKey();
     state[keyAsString(key)] = {
         value: initialState,
         listeners: []
@@ -34,7 +42,7 @@ export function createGlobalState<T>(initialState?: T): GlobalStateKey<T> {
 }
 
 export function createGlobalResource<T>(accessor: (abortSignal: AbortSignal) => Promise<T>|T, initialState?: T): GlobalResourceKey<T> {
-    const key = Symbol();
+    const key = generateNewKey();
     state[keyAsString(key)] = {
         value: initialState,
         default: initialState,
