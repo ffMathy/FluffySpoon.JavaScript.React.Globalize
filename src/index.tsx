@@ -25,10 +25,7 @@ export type GlobalResourceKey<T> = {
 
 let keyOffset = 0;
 function generateNewKey() {
-    if (typeof Symbol !== 'function')
-        return "key-" + (++keyOffset);
-
-    return Symbol();
+    return "key-" + (++keyOffset);
 }
 
 export function createGlobalState<T>(initialState?: T): GlobalStateKey<T> {
