@@ -7,7 +7,7 @@
   "dependencies": {
     "react": "file:../node_modules/react",
     "react-dom": "^16.9.0",
-    "react-scripts": "^3.0.1",
+    "react-scripts": "^3.4.3",
     "@fluffy-spoon/react-globalize": "file:.."
   },
   "scripts": {
