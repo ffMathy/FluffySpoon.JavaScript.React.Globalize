@@ -6,7 +6,7 @@
   "private": true,
   "dependencies": {
     "react": "file:../node_modules/react",
-    "react-dom": "^16.9.0",
+    "react-dom": "^17.0.1",
     "react-scripts": "^3.0.1",
     "@fluffy-spoon/react-globalize": "file:.."
   },
